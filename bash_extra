@@ -1,0 +1,256 @@
+#### By Mahradbt
+
+#Exports
+export VISUAL=vim
+export EDITOR=vim
+export MAILTO='me@example.com'
+export COMPOSE_INTERACTIVE_NO_CLI=1
+
+#Aliases
+alias cdb='cd -'
+alias c='clear'
+alias l='ls -laSh'
+alias rbrc='source ~/.bashrc'
+alias ebrc='vim ~/.bashrc'
+alias etc='c && cd /etc'
+alias p8='ping 8.8.8.8'
+alias history_clean_up='history -cw && echo "" |> $HISTFILE && cat $HISTFILE | wc -l && history -cw && exit'
+alias ..="cd .."
+alias t="tail"
+alias p="ps fax"
+alias h="head"
+alias fhere="find . -name "
+alias psg="ps aux | grep -v grep | grep -i -e VSZ -e"
+alias dramatic="pv -qL 10"
+alias dd_example='dd bs=4M if=./ubuntu-22.04-desktop-amd64.iso of=/dev/sda conv=fdatasync status=progress'
+
+#Override system
+#cd
+alias df="df -Tha --total"
+alias du2="du -ach | sort -h"
+alias free="free -mt"
+#alias ps="ps auxf"
+#alias wget="wget -c"
+#alias mkdir="mkdir -pv"
+alias top="htop"
+alias du1="ncdu"
+alias df="pydf"
+
+
+#Nginx
+alias go2nginxconfigs='c && cd /etc/nginx/sites-enabled/'
+alias nginxvhostsurls='grep -i server_name /etc/nginx/sites-enabled/*'
+alias nginxvhostsroots='grep -i root /etc/nginx/sites-enabled/*'
+alias nginxvhostslogs='grep -i _log /etc/nginx/sites-enabled/*'
+
+#Git
+alias gs='git status'
+alias gd='git diff'
+alias ga='git add'
+alias gdc='git diff --cached'
+alias gc='git commit'
+alias gb='git branch'
+
+#Systemctl
+alias stl="systemctl"
+
+#Sudo
+alias please='sudo'
+
+#Sets
+#set completion-ignore-case On
+
+#Includes
+if [ -f /usr/share/bash-completion/completions/git ]; then
+    source /usr/share/bash-completion/completions/git
+fi
+if [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+fi
+
+#Safety
+alias rm='echo "This is not the command you are looking for. if its a really temporary file use backslash then rm but we suggest use \"trash-put filepath\" or manually move it to main trash is at FS root .Trash \"mv filepath /.Trash\", for more info look at https://github.com/andreafrancia/trash-cli"'
+
+#Binds
+#bind "set completion-ignore-case on"
+bind "set show-all-if-ambiguous on"
+
+#TODO
+#Better file name
+#Auto update mechanism + log
+#Better git support but not every single alias out there just those I use most
+#Better categorization like my local
+#Maybe different files
+#Anything useful from my local ~/.bash_* except ip and creds
+#Maybe refactor some parts of my setup sequence to this like disable ipv6 both temp and persistant way or install and enable nginx, docker, enable/disable shecan, ...
+#Snippets, trash, domains, ssls, dbz, webservers, info: df + locate + docker ps + netdata + image optimization + free + netstat + vnstat
+
+#Functions
+gitmv()
+{
+    # If in a git repo - call git mv. otherwise- call mv
+    if [ x`git rev-parse --show-toplevel 2> /dev/null` = x ]; 
+    then
+        mv "$@"  
+    else 
+        git mv "$@" 
+    fi
+}
+alias mv="gitmv"
+if alias lsos 2>/dev/null; then 
+  unalias lsos
+fi
+lsos()
+{
+  if [ -f /usr/bin/lsb_release ]; then
+        lsb_release -a
+  else
+        if [ -f /etc/redhat-release ]; then
+              cat /etc/redhat-release
+        else
+              echo "not debian or redhat!"
+        fi
+  fi
+}
+function extract {
+ if [ -z "$1" ]; then
+    # display usage if no parameters given
+    echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+    echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
+    return 1
+ else
+    for n in $@
+    do
+      if [ -f "$n" ] ; then
+          case "${n%,}" in
+            *.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar) 
+                         tar xvf "$n"       ;;
+            *.lzma)      unlzma ./"$n"      ;;
+            *.bz2)       bunzip2 ./"$n"     ;;
+            *.rar)       unrar x -ad ./"$n" ;;
+            *.gz)        gunzip ./"$n"      ;;
+            *.zip)       unzip ./"$n"       ;;
+            *.z)         uncompress ./"$n"  ;;
+            *.7z|*.arj|*.cab|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.rpm|*.udf|*.wim|*.xar)
+                         7z x ./"$n"        ;;
+            *.xz)        unxz ./"$n"        ;;
+            *.exe)       cabextract ./"$n"  ;;
+            *)
+                         echo "extract: '$n' - unknown archive method"
+                         return 1
+                         ;;
+          esac
+      else
+          echo "'$n' - file does not exist"
+          return 1
+      fi
+    done
+fi
+}
+parse_git_branch() 
+{
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+zipf () 
+{ 
+    zip -r "$1".zip "$1" ; 
+}          # zipf:         To create a ZIP archive of a folder
+mkcd() { mkdir -p "$@" && cd "$@"; }
+mkdircd() { mkdir -p "$@" && cd "$_"; }
+#cd() {
+#        builtin cd "$@" && clear && ls -lahi
+#}
+myipfull() 
+{
+    curl ipinfo.io
+}
+myip() 
+{
+    curl ipinfo.io/ip
+}
+httpHeaders () 
+{ 
+    /usr/bin/curl -I -L $@ ; 
+}             # httpHeaders:      Grabs headers from web page
+httpDebug () 
+{ 
+    /usr/bin/curl $@ -o /dev/null -w "dns: %{time_namelookup} connect: %{time_connect} pretransfer: %{time_pretransfer} starttransfer: %{time_starttransfer} total: %{time_total}\n" ; 
+}
+als () {
+  echo "alias" $1'="'$2'"' >> ~/.bash_profile
+  source ~/.bash_profile
+}
+snpt () {
+    echo "$@" >> ~/SNIPPETS
+    echo "wrote the snippet at ~/SNIPPETS" | pv -qL 10
+}
+rbp () {
+    if [ -f ~/.bash_profile ]; then
+        source ~/.bash_profile
+    fi
+    if [ -f ~/.profile ]; then
+        source ~/.profile
+    fi
+}
+
+#PS1
+export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] # "
+
+#Slips & Spelling
+
+# head
+alias haed="head"
+# tail
+alias tial='tail'
+alias til='tail'
+alias tali='tail'
+# tail -f
+alias tailf='tail -f'
+# cd
+alias dc="cd"
+alias cdd="cd"
+alias cd..="cd .."
+# ls
+alias sl="ls"
+# pwd
+alias pdw="pwd"
+alias wpd="pwd"
+alias wdp="pwd"
+alias dwp="pwd"
+alias dpw="pwd"
+# git
+alias gti="git"
+alias giit="git"
+alias got="git"
+alias gut="git"
+# sudo
+alias sduo="sudo"
+alias suod="sudo"
+# sudo !!
+alias sudo!!="sudo !!"
+alias sduo="sudo"
+alias sudi='sudo'
+# kill
+alias kil='kill'
+alias kiall='killall'
+# think of console as vim
+alias console_not_vim="echo 'Dude I am Console not VIM, Get e Coffee for gods sake!'"
+alias :wq="console_not_vim"
+alias wq="console_not_vim"
+alias :qw="console_not_vim"
+alias qw="console_not_vim"
+alias :q="console_not_vim"
+alias :q!="console_not_vim"
+alias q!="console_not_vim"
+alias :w="console_not_vim"
+# echo
+alias ehco='echo'
+# exit
+alias exiit='exit'
+alias eixt='exit'
+# cat
+alias car='cat'
+alias oepn='open'
+alias telent="telnet"
+alias grpe="grep"
+alias ivm="vim"
