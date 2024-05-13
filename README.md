@@ -3,7 +3,10 @@
 
 ##### Table of Contents  
 [Setup bash environment](#bashextra)
+
 [Docker setup](#docker)
+
+[Markdown Cheatsheet](#markdown)
 
 
 
