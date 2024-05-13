@@ -11,7 +11,7 @@
 cp bash_extra ~/.bash_extra
 ```
 
-3. copy bash_extra and use it
+3. import `bash_extra`
 
 add below code at the end of `.bashrc`
 
