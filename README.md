@@ -1,5 +1,22 @@
 # Linux Scripts
 
+**Tired of wasting time configuring your Linux development environment?**
+
+This repository provides a comprehensive collection of cheatsheets and detailed documentation to streamline your setup process for:
+
+* Linux: Essential Linux configuration guides for a smooth development experience.
+
+* Docker: Learn how to leverage Docker containers for efficient application deployment.
+
+* Containers: Understand containerization concepts and best practices for managing containers.
+
+* Docker Compose: Master Docker Compose for effortless multi-container application orchestration.
+
+* DevOps Tools: Discover and integrate essential DevOps tools to automate your development workflow.
+
+
+**Get up and running quickly with clear instructions, helpful tips, and readily available resources!**
+
 
 ##### Table of Contents  
 [Setup bash environment](#bashextra)  
