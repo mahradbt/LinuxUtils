@@ -1,0 +1,35 @@
+services:
+    gitlab:
+        image: gitlab/gitlab-ce:15.0.1-ce.0
+        restart: always
+        environment:
+            GITLAB_OMNIBUS_CONFIG: |
+                external_url 'https://example.com'
+        volumes:
+            - $GITLAB_HOME/config:/etc/gitlab
+            - $GITLAB_HOME/logs:/var/log/gitlab
+            - $GITLAB_HOME/data:/var/opt/gitlab
+        networks:
+            - git-network
+
+    gitlab-runner:
+        image: gitlab/gitlab-runner:ubuntu-v15.0.0
+        restart: always
+        deploy:
+            resources:
+                limits:
+                    memory: 2000M
+        environment:
+            - CI_SERVER_URL=${GITLAB_CI_SERVER_URL}
+            - REGISTRATION_TOKEN=${GITLAB_RUNNER_REGISTRATION_TOKEN}
+            - REGISTER_NON_INTERACTIVE=${GITLAB_REGISTER_NON_INTERACTIVE}
+            - RUNNER_EXECUTOR=shell
+        volumes:
+            - ${GITLAB_HOME}/gitlab/runner:/etc/gitlab-runner
+            - /var/run/docker.sock:/var/run/docker.sock:rw
+        networks:
+            - git-network
+
+networks:
+    git-network:
+        driver: bridge
