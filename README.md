@@ -1,4 +1,4 @@
-# Linux Scripts
+# Linux Utils
 
 **Tired of wasting time configuring your Linux development environment?**
 
